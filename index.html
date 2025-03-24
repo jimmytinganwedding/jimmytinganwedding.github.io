@@ -10,6 +10,8 @@
       font-family: Arial, sans-serif;
       padding: 20px;
       background-color: #f7f7f7;
+      opacity: 0;
+      transition: opacity 0.8s ease;
       margin: 0;
     }
 
@@ -493,6 +495,10 @@
       inviteRadios.forEach(r => r.removeAttribute('required'));
       addressInput.removeAttribute('required');
     }
+
+    window.addEventListener('load', function() {
+      document.body.style.opacity = 1;
+    });
   </script>
 </body>
 
