@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,15 +27,18 @@
     /* 圖片容器，可用來置中或調整間距 */
     .image-container {
       text-align: center;
-      margin: 20px 0; /* 讓上下圖與內容有一些間距 */
+      margin: 20px 0;
+      /* 讓上下圖與內容有一些間距 */
     }
 
     .image-container img {
       max-width: 100%;
       height: auto;
       opacity: 0;
-      transition: opacity 2s ease-in; /* 淡入持續 2 秒，可自行調整 */
+      transition: opacity 2s ease-in;
+      /* 淡入持續 2 秒，可自行調整 */
     }
+
     .image-container img.fade-in {
       opacity: 1;
     }
@@ -57,7 +61,8 @@
 
     /* 每個輸入區塊的容器 */
     .form-group {
-      text-align: center; /* 讓裡面的文字(含 label)置中 */
+      text-align: center;
+      /* 讓裡面的文字(含 label)置中 */
       margin-bottom: 20px;
     }
 
@@ -91,10 +96,12 @@
       color: #000;
       text-align: center;
     }
+
     :-ms-input-placeholder {
       color: #000;
       text-align: center;
     }
+
     ::placeholder {
       color: #000;
       text-align: center;
@@ -102,12 +109,14 @@
 
     /* ====== 客製化 Radio ====== */
     .radio-group input[type="radio"] {
-      display: none; /* 隱藏原生按鈕 */
+      display: none;
+      /* 隱藏原生按鈕 */
     }
 
     .radio-group label {
       position: relative;
-      padding-left: 30px; /* 預留空間給自訂方框或圓圈 */
+      padding-left: 30px;
+      /* 預留空間給自訂方框或圓圈 */
       margin-right: 15px;
       cursor: pointer;
       font-size: 16px;
@@ -124,15 +133,17 @@
       width: 20px;
       height: 20px;
       border: 2px solid #C9BAAE;
-      border-radius: 40px; /* 若想用方框，可改為 4px 或 0 */
+      border-radius: 40px;
+      /* 若想用方框，可改為 4px 或 0 */
       background-color: #fff;
       box-sizing: border-box;
     }
 
     /* 當 radio 被選取時，將方框或圓圈填滿 */
-    .radio-group input[type="radio"]:checked + label::before {
+    .radio-group input[type="radio"]:checked+label::before {
       background-color: #C9BAAE;
-      box-shadow: inset 0 0 0 0 #fff; /* 內縮一圈白色，看起來更可愛 */
+      box-shadow: inset 0 0 0 0 #fff;
+      /* 內縮一圈白色，看起來更可愛 */
     }
 
     /* 送出按鈕：套用附圖樣式 */
@@ -148,6 +159,7 @@
       border-radius: 40px;
       cursor: pointer;
     }
+
     .submit-btn:hover {
       opacity: 0.9;
     }
@@ -164,6 +176,7 @@
     #extra-fields {
       display: none;
     }
+
     /* 收件地址欄位(若選擇"是"且想要紙本喜帖"是"才顯示)預設隱藏 */
     #address-group {
       display: none;
@@ -174,9 +187,44 @@
       display: block;
       margin: 0 auto;
       width: 100%;
-      height: 150px; /* 您可以根據需求自行調整高度 */
+      height: 150px;
+      /* 您可以根據需求自行調整高度 */
       border: 0;
       margin-bottom: 30px;
+    }
+
+    /* 旋轉動畫 */
+    .spinner-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 6px solid #999;
+      border-top: 6px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
@@ -190,7 +238,7 @@
 
     <!-- Google Map 區域 -->
     <div class="map-container">
-      <iframe 
+      <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.6203611674205!2d121.55088257537811!3d25.08085337778612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442ac0e0cb382c9%3A0x93f8899bf54138e7!2z5Y-w5YyX576O56aP5aSn6aOv5bqX!5e0!3m2!1szh-TW!2stw!4v1742798732439!5m2!1szh-TW!2stw"
         width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
         referrerpolicy="no-referrer-when-downgrade">
@@ -301,6 +349,10 @@
 
         <!-- 送出按鈕 -->
         <button type="submit" class="submit-btn">送出</button>
+        <div id="spinner" class="spinner-overlay" style="display: none;">
+          <div class="spinner"></div>
+        </div>
+
       </form>
 
       <p class="footer-text">
@@ -345,6 +397,15 @@
     form.addEventListener('submit', function (event) {
       event.preventDefault(); // 防止預設表單行為
 
+      const submitButton = document.querySelector('.submit-btn');
+      const spinner = document.getElementById('spinner'); // 取得 spinner 容器
+
+      // 顯示轉圈圈
+      spinner.style.display = 'flex';
+      // 禁用按鈕，避免重複點擊
+      submitButton.disabled = true;
+      submitButton.textContent = '送出中...';
+
       const formData = new FormData(this);
       const data = {};
       formData.forEach((value, key) => {
@@ -359,20 +420,26 @@
         },
         body: JSON.stringify(data),
       })
-      .then(response => response.json())
-      .then(resData => {
-        alert('提交成功！');
-        form.reset();
+        .then(response => response.json())
+        .then(resData => {
+          alert('提交成功！');
+          form.reset();
 
-        // 提交後，重置表單狀態
-        extraFields.style.display = 'none';
-        addressGroup.style.display = 'none';
-        removeRequired(); // 移除所有必填
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('提交失敗，請稍後再試！');
-      });
+          // 提交後，重置表單狀態
+          extraFields.style.display = 'none';
+          addressGroup.style.display = 'none';
+          removeRequired(); // 移除所有必填
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('提交失敗，請稍後再試！');
+        })
+        .finally(() => {
+          // 不管成功或失敗都要隱藏轉圈圈、恢復按鈕
+          spinner.style.display = 'none';
+          submitButton.disabled = false;
+          submitButton.textContent = '送出';
+        });
     });
 
     // 監聽 "是否參加" 的變化
@@ -428,4 +495,5 @@
     }
   </script>
 </body>
+
 </html>
