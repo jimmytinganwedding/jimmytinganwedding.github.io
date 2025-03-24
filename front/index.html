@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>婚禮邀請函</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f7f7f7;
+      margin: 0;
+    }
+
+    .wrapper {
+      max-width: 425px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* 圖片容器，可用來置中或調整間距 */
+    .image-container {
+      text-align: center;
+      margin: 20px 0; /* 讓上下圖與內容有一些間距 */
+    }
+
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      opacity: 0;
+      transition: opacity 2s ease-in; /* 淡入持續 2 秒，可自行調整 */
+    }
+    .image-container img.fade-in {
+      opacity: 1;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* 隱藏 label（因為題目改用 placeholder 或下拉選單） */
+    .visually-hidden {
+      position: absolute;
+      clip: rect(1px, 1px, 1px, 1px);
+      padding: 0;
+      border: 0;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+    }
+
+    /* 每個輸入區塊的容器 */
+    .form-group {
+      text-align: center; /* 讓裡面的文字(含 label)置中 */
+      margin-bottom: 20px;
+    }
+
+    /* 輸入框 (text, tel, textarea, select) 的樣式 */
+    .form-group input[type="text"],
+    .form-group input[type="tel"],
+    .form-group textarea,
+    .form-group select {
+      width: 80%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 2px solid #C9BAAE;
+      border-radius: 8px;
+      font-size: 16px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    /* 讓下拉選單文字也置中 (部分瀏覽器需要) */
+    .form-group select {
+      text-align-last: center;
+    }
+
+    /* 禁止 textarea 縮放 */
+    .form-group textarea {
+      resize: none;
+    }
+
+    /* placeholder 的文字顏色 & 置中 */
+    ::-webkit-input-placeholder {
+      color: #000;
+      text-align: center;
+    }
+    :-ms-input-placeholder {
+      color: #000;
+      text-align: center;
+    }
+    ::placeholder {
+      color: #000;
+      text-align: center;
+    }
+
+    /* ====== 客製化 Radio ====== */
+    .radio-group input[type="radio"] {
+      display: none; /* 隱藏原生按鈕 */
+    }
+
+    .radio-group label {
+      position: relative;
+      padding-left: 30px; /* 預留空間給自訂方框或圓圈 */
+      margin-right: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      user-select: none;
+    }
+
+    /* 預設顯示方框或圓圈，可自行調整大小、邊框等 */
+    .radio-group label::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border: 2px solid #C9BAAE;
+      border-radius: 40px; /* 若想用方框，可改為 4px 或 0 */
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+
+    /* 當 radio 被選取時，將方框或圓圈填滿 */
+    .radio-group input[type="radio"]:checked + label::before {
+      background-color: #C9BAAE;
+      box-shadow: inset 0 0 0 0 #fff; /* 內縮一圈白色，看起來更可愛 */
+    }
+
+    /* 送出按鈕：套用附圖樣式 */
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin-top: 10px;
+      background-color: #C9BAAE;
+      color: #000;
+      font-size: 16px;
+      border: 5px solid #C9BAAE;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* 底部提示文字 */
+    .footer-text {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    /* 額外欄位(若選擇"是"才顯示)預設隱藏 */
+    #extra-fields {
+      display: none;
+    }
+    /* 收件地址欄位(若選擇"是"且想要紙本喜帖"是"才顯示)預設隱藏 */
+    #address-group {
+      display: none;
+    }
+
+    /* Google Map 區域 */
+    .map-container iframe {
+      display: block;
+      margin: 0 auto;
+      width: 100%;
+      height: 150px; /* 您可以根據需求自行調整高度 */
+      border: 0;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper"><!-- 新增一個包裹容器 -->
+    <!-- 上方圖片 -->
+    <div class="image-container">
+      <img src="images/top.jpg">
+    </div>
+
+    <!-- Google Map 區域 -->
+    <div class="map-container">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.6203611674205!2d121.55088257537811!3d25.08085337778612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442ac0e0cb382c9%3A0x93f8899bf54138e7!2z5Y-w5YyX576O56aP5aSn6aOv5bqX!5e0!3m2!1szh-TW!2stw!4v1742798732439!5m2!1szh-TW!2stw"
+        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+
+    <div class="form-container">
+      <form id="wedding-invite-form">
+
+        <!-- 1. 姓名 -->
+        <div class="form-group">
+          <label for="name" class="visually-hidden">姓名 (請填寫全名)</label>
+          <input type="text" id="name" name="name" placeholder="姓名 (請填寫全名)" required>
+        </div>
+
+        <!-- 2. 是否參加 -->
+        <div class="form-group">
+          <label style="color: #000;">是否參加？</label>
+          <div class="radio-group">
+            <!-- 重排 HTML：input 與 label 成兄弟 -->
+            <input type="radio" id="attendance-yes" name="attendance" value="是" required>
+            <label for="attendance-yes">是</label>
+
+            <input type="radio" id="attendance-no" name="attendance" value="忍痛拒絕">
+            <label for="attendance-no">忍痛拒絕</label>
+          </div>
+        </div>
+
+        <!-- 額外欄位(只有選擇"是"才顯示) -->
+        <div id="extra-fields">
+
+          <!-- 電話號碼 -->
+          <div class="form-group">
+            <label for="phone" class="visually-hidden">電話號碼</label>
+            <input type="tel" id="phone" name="phone" placeholder="電話號碼">
+          </div>
+
+          <!-- 你是... (下拉選單) -->
+          <div class="form-group">
+            <label for="role" class="visually-hidden">你是...</label>
+            <select id="role" name="role">
+              <option value="" disabled selected>你是...</option>
+              <option value="新郎朋友">新郎朋友</option>
+              <option value="新郎家人">新郎家人</option>
+              <option value="新娘朋友">新娘朋友</option>
+              <option value="新娘家人">新娘家人</option>
+              <option value="新郎父母朋友">新郎父母朋友</option>
+              <option value="新娘父母朋友">新娘父母朋友</option>
+              <option value="其他特殊關係！">其他特殊關係！</option>
+            </select>
+          </div>
+
+          <!-- 大人人數 (含本人) -->
+          <div class="form-group">
+            <label for="adults" class="visually-hidden">大人人數 (含本人)</label>
+            <input type="text" id="adults" name="adults" placeholder="大人人數 (含本人)">
+          </div>
+
+          <!-- 小孩人數 / 兒童椅 / 兒童餐具 -->
+          <div class="form-group">
+            <label for="children" class="visually-hidden">小孩人數 / 兒童椅 / 兒童餐具</label>
+            <input type="text" id="children" name="children" placeholder="小孩人數 / 兒童椅 / 兒童餐具">
+          </div>
+
+          <!-- 素食餐點份數 -->
+          <div class="form-group">
+            <label for="vegan" class="visually-hidden">素食餐點份數</label>
+            <input type="text" id="vegan" name="vegan" placeholder="素食餐點份數">
+          </div>
+
+          <!-- 是否吃牛 -->
+          <div class="form-group">
+            <label style="color: #000;">是否吃牛？</label>
+            <div class="radio-group">
+              <input type="radio" id="beef-yes" name="beef" value="吃">
+              <label for="beef-yes">吃</label>
+
+              <input type="radio" id="beef-no" name="beef" value="不吃">
+              <label for="beef-no">不吃</label>
+            </div>
+          </div>
+
+          <!-- 我想要紙本喜帖 -->
+          <div class="form-group">
+            <label style="color: #000;">我想要紙本喜帖</label>
+            <div class="radio-group">
+              <input type="radio" id="invite-yes" name="invite" value="是">
+              <label for="invite-yes">是</label>
+
+              <input type="radio" id="invite-no" name="invite" value="否">
+              <label for="invite-no">否</label>
+            </div>
+          </div>
+
+          <!-- 收件地址 (只有"參加=是" AND "我想要紙本喜帖=是"時顯示) -->
+          <div class="form-group" id="address-group">
+            <label for="address" class="visually-hidden">收件地址</label>
+            <input type="text" id="address" name="address" placeholder="收件地址">
+          </div>
+
+        </div> <!-- end of #extra-fields -->
+
+        <!-- 3. 留言給我們 (無論是否參加都可以留下留言) -->
+        <div class="form-group">
+          <label for="message" class="visually-hidden">留言給我們</label>
+          <input type="text" id="message" name="message" placeholder="留言給我們❤️">
+        </div>
+
+        <!-- 送出按鈕 -->
+        <button type="submit" class="submit-btn">送出</button>
+      </form>
+
+      <p class="footer-text">
+        完成填寫，可以LINE聯絡我們確認唷！
+      </p>
+    </div>
+
+    <!-- 下方圖片 -->
+    <div class="image-container">
+      <img src="images/bottom.jpg">
+    </div>
+  </div>
+
+  <script>
+    const backendUrl = 'https://wedding-api-brgzggfkdabgembr.eastasia-01.azurewebsites.net';  // 請依您的後端URL調整
+
+    // 取得關鍵 DOM 元素
+    const form = document.getElementById('wedding-invite-form');
+    const extraFields = document.getElementById('extra-fields');
+    const addressGroup = document.getElementById('address-group');
+
+    // 各欄位
+    const phoneInput = document.getElementById('phone');
+    const roleSelect = document.getElementById('role');
+    const adultsInput = document.getElementById('adults');
+    const beefRadios = document.querySelectorAll('input[name="beef"]');
+    const inviteRadios = document.querySelectorAll('input[name="invite"]');
+    const addressInput = document.getElementById('address');
+
+    // 參加(是/否) Radio
+    const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
+
+    // 淡入效果：載入後對所有 .image-container 裡的 img 加上 .fade-in
+    window.addEventListener('load', function () {
+      const images = document.querySelectorAll('.image-container img');
+      images.forEach(img => {
+        img.classList.add('fade-in');
+      });
+    });
+
+    // 提交表單
+    form.addEventListener('submit', function (event) {
+      event.preventDefault(); // 防止預設表單行為
+
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+
+      // 發送資料到後端
+      fetch(`${backendUrl}/submit-form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(resData => {
+        alert('提交成功！');
+        form.reset();
+
+        // 提交後，重置表單狀態
+        extraFields.style.display = 'none';
+        addressGroup.style.display = 'none';
+        removeRequired(); // 移除所有必填
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('提交失敗，請稍後再試！');
+      });
+    });
+
+    // 監聽 "是否參加" 的變化
+    attendanceRadios.forEach(radio => {
+      radio.addEventListener('change', updateFormState);
+    });
+
+    // 監聽 "我想要紙本喜帖" 的變化
+    inviteRadios.forEach(radio => {
+      radio.addEventListener('change', updateFormState);
+    });
+
+    // 動態更新表單狀態
+    function updateFormState() {
+      const attendanceValue = document.querySelector('input[name="attendance"]:checked')?.value;
+      const inviteValue = document.querySelector('input[name="invite"]:checked')?.value;
+
+      if (attendanceValue === '是') {
+        // 顯示額外欄位
+        extraFields.style.display = 'block';
+
+        // 設置必填 (電話、你是...、大人人數、是否吃牛、我想要紙本喜帖)
+        phoneInput.setAttribute('required', 'required');
+        roleSelect.setAttribute('required', 'required');
+        adultsInput.setAttribute('required', 'required');
+        beefRadios.forEach(r => r.setAttribute('required', 'required'));
+        inviteRadios.forEach(r => r.setAttribute('required', 'required'));
+
+        // 檢查「我想要紙本喜帖」選項
+        if (inviteValue === '是') {
+          addressGroup.style.display = 'block';
+          addressInput.setAttribute('required', 'required');
+        } else {
+          addressGroup.style.display = 'none';
+          addressInput.removeAttribute('required');
+        }
+      } else {
+        // 若是 "忍痛拒絕" 則隱藏額外欄位
+        extraFields.style.display = 'none';
+        addressGroup.style.display = 'none';
+        removeRequired();
+      }
+    }
+
+    // 將「參加=是」時的必填欄位還原成非必填
+    function removeRequired() {
+      phoneInput.removeAttribute('required');
+      roleSelect.removeAttribute('required');
+      adultsInput.removeAttribute('required');
+      beefRadios.forEach(r => r.removeAttribute('required'));
+      inviteRadios.forEach(r => r.removeAttribute('required'));
+      addressInput.removeAttribute('required');
+    }
+  </script>
+</body>
+</html>
